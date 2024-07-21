@@ -103,6 +103,50 @@ app.get('/list', (req, res) => {
     });
 });
 
+app.post('/remove', (req, res) => {
+    const id = req.body.task_id;
+    console.log(req.body)
+    console.log('Task to be removed:', id);
+    console.log('Task to be removed:', id);
+
+    //write query to remove task from tasks.json using task_id
+    if (id) {
+        fs.readFile(tasksFilePath, 'utf8', (err, data) => {
+            let tasksJson;
+
+            if (err) {
+                console.error('Error reading tasks.json:', err);
+                return res.status(500).json({ error: 'Error reading tasks' });
+            } else {
+                try {
+                    tasksJson = JSON.parse(data);
+                } catch (parseError) {
+                    console.error('Error parsing tasks.json:', parseError);
+                    tasksJson = { tasks: [] };
+                }
+            }
+
+            tasksJson.tasks = tasksJson.tasks.filter((task) => task.id !== id);
+
+            // Write the updated tasks back to tasks.json
+            fs.writeFile(tasksFilePath, JSON.stringify(tasksJson, null, 2), (writeErr) => {
+                if (writeErr) {
+                    console.error('Error writing to tasks.json:', writeErr);
+                } else {
+                    console.log('Task successfully added to tasks.json');
+                    stopCron();
+                    startCron();
+                }
+            });
+        });
+        console.log('Task removed successfully');
+        res.status(200).json({ "message": "Task removed successfully" });
+    } else {
+        res.status(500).json({ "message": "Task was not removed successfully" });
+    }
+
+})
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
