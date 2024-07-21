@@ -15,6 +15,14 @@
       "createdAt": "2024-07-21T06:54:49.401Z",
       "timeToRemind": "00:00",
       "email": "vaibhav.p21@iiits.in"
+    },
+    {
+      "id": "6ccc32d5-4d0c-444f-ac02-14d45ab9c748",
+      "name": "Homework",
+      "reminderType": "Daily",
+      "createdAt": "2024-07-21T08:33:12.818Z",
+      "timeToRemind": "55:00",
+      "email": "vaibhav.p21@iiits.in"
     }
   ]
 }
