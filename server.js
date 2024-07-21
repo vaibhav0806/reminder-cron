@@ -147,6 +147,109 @@ app.post('/remove', (req, res) => {
 
 })
 
+app.post('/otp', (req, res) => {
+    const { otp } = req.body;
+
+    console.log(otp);
+
+    var mailOptions = {
+        from: `Reminders.xyz ${process.env.APP_EMAIL}`,
+        to: task.email,
+        subject: `Your One-Time Password for Reminders.xyz`,
+        html: `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f9;
+                    margin: 0;
+                    padding: 0;
+                    color: #333;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    text-align: center;
+                    padding: 20px 0;
+                    background-color: #4CAF50;
+                    color: #ffffff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+                .content {
+                    padding: 20px;
+                    line-height: 1.6;
+                }
+                .content h2 {
+                    font-size: 20px;
+                    margin: 0 0 10px;
+                }
+                .content p {
+                    margin: 0 0 20px;
+                }
+                .otp {
+                    font-size: 24px;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 10px;
+                    background-color: #f0f0f0;
+                    border-radius: 5px;
+                }
+                .footer {
+                    text-align: center;
+                    padding: 10px 0;
+                    background-color: #f4f4f9;
+                    color: #777;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Your One-Time Password</h1>
+                </div>
+                <div class="content">
+                    <h2>Verification Required</h2>
+                    <p>Hello,</p>
+                    <p>You've requested a one-time password (OTP) for your Reminders.xyz account. Please use the following OTP to complete your action:</p>
+                    <div class="otp">${otp}</div>
+                    <p>This OTP will expire in 10 minutes for security reasons.</p>
+                    <p>If you didn't request this OTP, please ignore this email or contact our support team if you have any concerns.</p>
+                    <p>Best Regards,<br>Reminders.xyz Team</p>
+                </div>
+                <div class="footer">
+                    <p>&copy; ${new Date().getFullYear()} Reminders.xyz. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>`
+    }
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response)
+        }
+    })
+
+    // Process the OTP here
+    // For example, you might validate it, store it, or use it for authentication
+
+    // Respond with a success message
+    res.status(200).json({ message: 'OTP received successfully', otp });
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
