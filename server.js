@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
@@ -7,6 +8,16 @@ require('dotenv').config();
 const port = process.env.PORT || 3000;
 
 const tasksFilePath = path.join(__dirname, 'tasks', 'tasks.json');
+
+const transporter = nodemailer.createTransport({
+    host: 'smtppro.zoho.in',
+    port: 465,
+    secure: true, //ssl
+    auth: {
+        user: process.env.APP_EMAIL,
+        pass: process.env.APP_PASS,
+    }
+});
 
 let cronProcess;
 
