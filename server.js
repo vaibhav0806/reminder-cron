@@ -148,13 +148,13 @@ app.post('/remove', (req, res) => {
 })
 
 app.post('/otp', (req, res) => {
-    const { otp } = req.body;
+    const { otp, email } = req.body;
 
     console.log(otp);
 
     var mailOptions = {
         from: `Reminders.xyz ${process.env.APP_EMAIL}`,
-        to: task.email,
+        to: email,
         subject: `Your One-Time Password for Reminders.xyz`,
         html: `<!DOCTYPE html>
         <html lang="en">
