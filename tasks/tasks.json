@@ -1,5 +1,20 @@
 {
   "tasks": [
-    
+    {
+      "id": "0b020f91-6633-4d46-b6ce-808d5dab3024",
+      "name": "Gym",
+      "reminderType": "Hourly",
+      "createdAt": "2024-07-21T03:30:48.755Z",
+      "timeToRemind": "08:00",
+      "email": "vaibhav.p21@iiits.in"
+    },
+    {
+      "id": "84ff0b73-83a7-490d-a581-4967204b4c0d",
+      "name": "Food",
+      "reminderType": "Daily",
+      "createdAt": "2024-07-21T06:54:49.401Z",
+      "timeToRemind": "00:00",
+      "email": "vaibhav.p21@iiits.in"
+    }
   ]
 }

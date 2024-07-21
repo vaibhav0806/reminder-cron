@@ -1,25 +1,48 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const path = require('path');
 const fs = require('fs');
-const port = 3000
+const { exec } = require('child_process');
+require('dotenv').config();
+const port = process.env.PORT || 3000;
 
 const tasksFilePath = path.join(__dirname, 'tasks', 'tasks.json');
+
+let cronProcess;
+
+function startCron() {
+    cronProcess = exec('node ' + path.join(__dirname, 'cron.js'));
+    cronProcess.stdout.on('data', (data) => {
+        console.log(`Cron stdout: ${data}`);
+    });
+    cronProcess.stderr.on('data', (data) => {
+        console.error(`Cron stderr: ${data}`);
+    });
+    console.log('Cron job started');
+}
+
+function stopCron() {
+    if (cronProcess) {
+        cronProcess.kill();
+        console.log('Cron job stopped');
+    }
+}
+
+startCron();
 
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+    res.send('Hello World!');
+});
 
 app.post('/add', (req, res) => {
     const newTask = req.body;
     console.log('Task received', newTask);
-    if(newTask) {
-        
+    if (newTask) {
         fs.readFile(tasksFilePath, 'utf8', (err, data) => {
             let tasksJson;
-    
+
             if (err) {
                 // If the file doesn't exist or can't be read, initialize with an empty tasks array
                 tasksJson = { tasks: [] };
@@ -31,24 +54,26 @@ app.post('/add', (req, res) => {
                     tasksJson = { tasks: [] };
                 }
             }
-    
+
             // Append the new task to the tasks array
             tasksJson.tasks.push(newTask);
-    
+
             // Write the updated tasks back to tasks.json
             fs.writeFile(tasksFilePath, JSON.stringify(tasksJson, null, 2), (writeErr) => {
                 if (writeErr) {
                     console.error('Error writing to tasks.json:', writeErr);
                 } else {
                     console.log('Task successfully added to tasks.json');
+                    stopCron();
+                    startCron();
                 }
             });
         });
-        res.status(200).json({"message": "Task is added successfully"});
+        res.status(200).json({ "message": "Task is added successfully" });
     } else {
-        res.status(500).json({"message": "Task was not added successfully"});
+        res.status(500).json({ "message": "Task was not added successfully" });
     }
-})
+});
 
 app.get('/list', (req, res) => {
     const email = req.query.email; // Changed from req.body to req.query for GET request
@@ -79,5 +104,9 @@ app.get('/list', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+    console.log(`Example app listening on port ${port}`);
+});
+
+process.on('exit', () => {
+    stopCron();
+});
